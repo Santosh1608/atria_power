@@ -1,6 +1,10 @@
 defmodule AtriaPower.TempServer do
   use GenServer
+  @minute 60 * 1000
 
+  @moduledoc """
+  This acts as IOT server for Temperature Sesnor sending random temparatures
+  """
   # Client API Calls
   def start_link(_args) do
     GenServer.start_link(__MODULE__, %{status: "disabled"}, name: __MODULE__)
@@ -45,7 +49,7 @@ defmodule AtriaPower.TempServer do
 
   # Private Functions
   defp schedule_packet() do
-    Process.send_after(self(), :send_packet, 5000)
+    Process.send_after(self(), :send_packet, @minute)
   end
 
   defp send_packet(packet) do

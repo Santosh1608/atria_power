@@ -1,5 +1,4 @@
 <h1>Listing Data packets</h1>
-
 <div>
   <%= form_for @conn, Routes.data_packet_path(@conn, :search), [as: "filters", class: "form-horizontal"], fn f -> %>
     <div>
@@ -42,11 +41,11 @@ default: {{today().year, today().month, today().day}, {00, 00, 00}}
     </div>
 
   </div>
-  <%= submit "Get Packets"%>
-
+  <%= submit "Get Data Packets", class: "btn btn-lg" %>
 <% end %>
 </div>
 
+<hr>
 <table>
   <thead>
     <tr>
@@ -67,12 +66,21 @@ default: {{today().year, today().month, today().day}, {00, 00, 00}}
   <% end %>
   </tbody>
 </table>
+<hr>
+<h2> The Line Graph of Temparatures</h2>
+<hr>
 
+<p> Max Temparature: <strong> <%= max_temp(@data_packets) %> </strong>
+| Min Temparature: <strong> <%= min_temp(@data_packets) %> </strong>
+| Average Temparature: <strong> <%= avg_temp(@data_packets) %> </strong> </p>
+<hr>
 <div>
-  <canvas id="lineChart" width="400" height="400"></canvas>
+  <canvas id="lineChart" width="100%" height="100%"></canvas>
 </div>
 
 <script type="text/javascript">
-  window.temp_data_packets = <%= raw(Jason.encode!(fetch_chart_data @data_packets)) %>
+  window.temp_chart_data = <%= raw(Jason.encode!(fetch_chart_data @data_packets)) %>
   window.temp_chart_labels = <%= raw(Jason.encode!(fetch_chart_labels @data_packets)) %>
 </script>
+<script src='<%= Routes.static_path(@conn, "/js/temp_charts.js") %>' type="text/javascript"></script>
+

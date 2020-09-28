@@ -28,4 +28,24 @@ defmodule AtriaPowerWeb.DataPacketView do
   def today() do
     Timex.today()
   end
+
+  def avg_temp(data_packets) do
+    data_packets
+    |> Enum.map(& &1.reading)
+    |> Enum.sum()
+    |> Kernel./(Enum.count(data_packets))
+    |> Float.round(2)
+  end
+
+  def min_temp(data_packets) do
+    data_packets
+    |> Enum.map(& &1.reading)
+    |> Enum.min()
+  end
+
+  def max_temp(data_packets) do
+    data_packets
+    |> Enum.map(& &1.reading)
+    |> Enum.max()
+  end
 end

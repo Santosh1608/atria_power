@@ -26,17 +26,42 @@ defmodule AtriaPower.Sensors do
           sensor_type: q.sensor_type
         }
 
-    if Map.equal?(params, %{}) do
-      {:ok, Repo.all(query)}
-    else
-      case apply_filters(query, params) do
-        {:ok, query} ->
-          {:ok, Repo.all(query)}
-
-        {:error, :invalid_filters} ->
-          {:error, "Filters are not valid"}
+    params =
+      if Map.equal?(params, %{}) do
+        %{"filters" => get_default_filters()}
+      else
+        params
       end
+
+    case apply_filters(query, params) do
+      {:ok, query} ->
+        {:ok, Repo.all(query)}
+
+      {:error, :invalid_filters} ->
+        {:error, "Filters are not valid"}
     end
+  end
+
+  defp get_default_filters() do
+    today = Timex.today()
+
+    %{
+      "from_date" => %{
+        "day" => today.day(),
+        "month" => today.month(),
+        "year" => today.year(),
+        "hour" => 00,
+        "minute" => 00
+      },
+      "to_date" => %{
+        "day" => today.day(),
+        "month" => today.month(),
+        "year" => today.year(),
+        "hour" => 23,
+        "minute" => 59
+      },
+      sensor_type: "temp_sensor"
+    }
   end
 
   defp from_timestamp(filters, timezone) do
@@ -53,8 +78,12 @@ defmodule AtriaPower.Sensors do
 
   defp frame_timestamp(date, timezone) do
     date =
-      Map.new(date, fn {key, value} ->
-        {key, String.to_integer(value)}
+      Map.new(date, fn
+        {key, value} when is_binary(value) ->
+          {key, String.to_integer(value)}
+
+        any ->
+          any
       end)
 
     date_tuple = {date["year"], date["month"], date["day"]}
