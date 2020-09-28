@@ -1,3 +1,5 @@
+<%= link "<- Go Back To Home", to: Routes.page_path(@conn, :index) %>
+<hr>
 <h1>Listing Data packets</h1>
 <div>
   <%= form_for @conn, Routes.data_packet_path(@conn, :search), [as: "filters", class: "form-horizontal"], fn f -> %>
@@ -46,6 +48,7 @@ default: {{today().year, today().month, today().day}, {00, 00, 00}}
 </div>
 
 <hr>
+
 <table>
   <thead>
     <tr>
@@ -57,22 +60,26 @@ default: {{today().year, today().month, today().day}, {00, 00, 00}}
     </tr>
   </thead>
   <tbody>
-    <%= for data_packet <- @data_packets do %>
-      <tr>
-      <td><%= data_packet.sensor_type %></td>
-      <td><%= timestamp data_packet.timestamp %></td>
-      <td><%= data_packet.reading %></td>
-    </tr>
-  <% end %>
+    <%= if @data_packets == [] do %>
+      <h3 class="alert alert-danger">No Data Available To Show </h3>
+    <% else %>
+      <%= for data_packet <- @data_packets do %>
+        <tr>
+        <td><%= data_packet.sensor_type %></td>
+        <td><%= timestamp data_packet.timestamp %></td>
+        <td><%= data_packet.reading %></td>
+      </tr>
+    <% end %>
+    <% end %>
   </tbody>
 </table>
 <hr>
 <h2> The Line Graph of Temparatures</h2>
 <hr>
 
-<p> Max Temparature: <strong> <%= max_temp(@data_packets) %> </strong>
-| Min Temparature: <strong> <%= min_temp(@data_packets) %> </strong>
-| Average Temparature: <strong> <%= avg_temp(@data_packets) %> </strong> </p>
+<p> <span class="alert alert-danger"> Max Temparature: <strong> <%= max_temp(@data_packets) %> </strong> </span>
+  | <span class="alert alert-info"> Min Temparature: <strong> <%= min_temp(@data_packets) %> </strong> </span>
+  | <span class="alert alert-info"> Average Temparature: <strong> <%= avg_temp(@data_packets) %> </strong> </span> </p>
 <hr>
 <div>
   <canvas id="lineChart" width="100%" height="100%"></canvas>

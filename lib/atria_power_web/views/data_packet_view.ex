@@ -29,6 +29,8 @@ defmodule AtriaPowerWeb.DataPacketView do
     Timex.today()
   end
 
+  def avg_temp([]), do: 0.0
+
   def avg_temp(data_packets) do
     data_packets
     |> Enum.map(& &1.reading)
@@ -37,11 +39,15 @@ defmodule AtriaPowerWeb.DataPacketView do
     |> Float.round(2)
   end
 
+  def min_temp([]), do: 0.0
+
   def min_temp(data_packets) do
     data_packets
     |> Enum.map(& &1.reading)
     |> Enum.min()
   end
+
+  def max_temp([]), do: 0.0
 
   def max_temp(data_packets) do
     data_packets

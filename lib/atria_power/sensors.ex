@@ -20,6 +20,7 @@ defmodule AtriaPower.Sensors do
   def list_data_packets(params) do
     query =
       from q in DataPacket,
+        order_by: [desc: q.timestamp],
         select: %{
           reading: q.reading,
           timestamp: q.timestamp,

@@ -1,5 +1,6 @@
 defmodule AtriaPower.TempServer do
   use GenServer
+  require Logger
   @minute 60 * 1000
 
   @moduledoc """
@@ -24,7 +25,7 @@ defmodule AtriaPower.TempServer do
   end
 
   def handle_call(:enable, _from, state) do
-    # Schedule packet to be sent at some point
+    # Schedule packet to be sent at some point after a minute
     schedule_packet()
     {:reply, {:ok, "enabled"}, %{state | status: "enabled"}}
   end
@@ -63,12 +64,11 @@ defmodule AtriaPower.TempServer do
            headers,
            []
          ) do
-      {:ok, response} ->
-        IO.inspect(response, label: "The response")
+      {:ok, _response} ->
+        Logger.info("Packet has been sent")
 
-      {:error, error} ->
-        J
-        IO.inspect(error, label: "The Error")
+      {:error, _error} ->
+        Logger.info("Error in sending the packet")
     end
   end
 end
