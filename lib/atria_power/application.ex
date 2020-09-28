@@ -9,6 +9,10 @@ defmodule AtriaPower.Application do
     children = [
       # Start the Ecto repository
       AtriaPower.Repo,
+
+      # Start the Temparature Server
+      AtriaPower.TempServer,
+
       # Start the Telemetry supervisor
       AtriaPowerWeb.Telemetry,
       # Start the PubSub system

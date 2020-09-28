@@ -17,6 +17,14 @@ defmodule AtriaPowerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get("/sensors/enable/:sensor_type", DataPacketController, :enable)
+    get("/sensors/disable/:sensor_type", DataPacketController, :disable)
+    get "/data_packets", DataPacketController, :index
+  end
+
+  scope "/", AtriaPowerWeb do
+    pipe_through :api
+    post "/data_packets", DataPacketController, :create
   end
 
   # Other scopes may use custom stacks.
