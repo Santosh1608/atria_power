@@ -3,25 +3,39 @@ defmodule AtriaPowerWeb.DataPacketController do
 
   alias AtriaPower.Sensors
 
-  def index(conn, params) do
-    data_packets = Sensors.list_data_packets(params)
-    render(conn, "index.html", data_packets: data_packets)
+  def index(conn, _params) do
+    case Sensors.list_data_packets(%{}) do
+      {:ok, data_packets} ->
+        render(conn, "index.html", data_packets: data_packets)
+
+      {:error, reason} ->
+        conn
+        |> put_flash(:error, reason)
+        |> redirect(to: Routes.page_path(conn, :index))
+    end
   end
 
-  def create(conn, params) do
-    IO.inspect(params, label: "The params......")
+  def search(conn, params) do
+    case Sensors.list_data_packets(params) do
+      {:ok, data_packets} ->
+        render(conn, "index.html", data_packets: data_packets)
+
+      {:error, reason} ->
+        conn
+        |> put_flash(:error, reason)
+        |> redirect(to: Routes.page_path(conn, :index))
+    end
+  end
+
+  def create(conn, _params) do
     data_packet_params = conn.body_params
 
     case Sensors.create_data_packet(data_packet_params) do
-      {:ok, data_packet} ->
-        conn
-        |> put_flash(:info, "Data packet created successfully.")
-        |> redirect(to: Routes.data_packet_path(conn, :index, data_packet))
+      {:ok, _data_packet} ->
+        json(conn, %{data: %{status: 200, message: "Packet Deliverd"}})
 
       {:error, %Ecto.Changeset{} = _changeset} ->
-        conn
-        |> put_flash(:info, "Data packet creation failed")
-        |> redirect(to: Routes.data_packet_path(conn, :index))
+        json(conn, %{error: %{message: "Packet Un Delivered"}})
     end
   end
 

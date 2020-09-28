@@ -20,6 +20,7 @@ defmodule AtriaPowerWeb.Router do
     get("/sensors/enable/:sensor_type", DataPacketController, :enable)
     get("/sensors/disable/:sensor_type", DataPacketController, :disable)
     get "/data_packets", DataPacketController, :index
+    post "/data_packets/search", DataPacketController, :search
   end
 
   scope "/", AtriaPowerWeb do

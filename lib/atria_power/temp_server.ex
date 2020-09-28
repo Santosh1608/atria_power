@@ -34,7 +34,7 @@ defmodule AtriaPower.TempServer do
     reading = AtriaPower.RandomTemparature.generate()
     packet = %{timestamp: timestamp, reading: reading, sensor_type: "temp_sensor"}
 
-    process_packet(packet)
+    send_packet(packet)
 
     if state.status == "enabled" do
       schedule_packet()
@@ -48,13 +48,12 @@ defmodule AtriaPower.TempServer do
     Process.send_after(self(), :send_packet, 5000)
   end
 
-  defp process_packet(packet) do
+  defp send_packet(packet) do
     url = "http://localhost:4000/data_packets"
     request_data = Jason.encode!(packet)
-    headers = [ContentType: "application/json"]
+    headers = [{"Content-type", "application/json"}]
 
-    case HTTPoison.request(
-           :post,
+    case HTTPoison.post(
            url,
            request_data,
            headers,
@@ -62,6 +61,10 @@ defmodule AtriaPower.TempServer do
          ) do
       {:ok, response} ->
         IO.inspect(response, label: "The response")
+
+      {:error, error} ->
+        J
+        IO.inspect(error, label: "The Error")
     end
   end
 end

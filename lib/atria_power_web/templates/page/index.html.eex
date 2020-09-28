@@ -16,6 +16,10 @@
           <%= link("Enable Here", to: Routes.data_packet_path(@conn, :enable, "temparature"))%>
         <% end %>
       </li>
+
+      <li>
+          <%= link("Goto DataPackets", role: "button", to: Routes.data_packet_path(@conn, :index))%>
+      </li>
     </ul>
   </article>
 </section>

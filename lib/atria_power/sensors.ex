@@ -13,11 +13,11 @@ defmodule AtriaPower.Sensors do
   Returns the list of data_packets.  
   ## Examples
 
-      iex> list_data_packets()
+  iex> list_data_packets(%{})
       [%DataPacket{}, ...]
 
   """
-  def list_data_packets do
+  def list_data_packets(params) do
     query =
       from q in DataPacket,
         select: %{
@@ -26,39 +26,67 @@ defmodule AtriaPower.Sensors do
           sensor_type: q.sensor_type
         }
 
-    Repo.all(query)
-  end
-
-  def list_data_packets(filters) do
-    query =
-      from q in DataPacket,
-        select: %{
-          reading: q.reading,
-          timestamp: q.timestamp,
-          sensor_type: q.sensor_type
-        }
-
-    query
-    |> apply_filters(filters)
-    |> Repo.all()
-  end
-
-  defp prepare_filters(params) do
-  end
-
-  defp apply_filters(query, filters) do
-    query =
-      if range = Map.get(filters, :range) do
-        from q in query,
-          where: q.timestamp >= ^range.from and q.timestamp <= ^range.to
-      else
-        query
-      end
-
-    if sensor = Map.get(filters, :sensor_type) do
-      from q in query, where: q.sesor_type == ^sensor
+    if Map.equal?(params, %{}) do
+      {:ok, Repo.all(query)}
     else
-      query
+      case apply_filters(query, params) do
+        {:ok, query} ->
+          {:ok, Repo.all(query)}
+
+        {:error, :invalid_filters} ->
+          {:error, "Filters are not valid"}
+      end
+    end
+  end
+
+  defp from_timestamp(filters, timezone) do
+    filters
+    |> Map.get("from_date")
+    |> frame_timestamp(timezone)
+  end
+
+  defp to_timestamp(filters, timezone) do
+    filters
+    |> Map.get("to_date")
+    |> frame_timestamp(timezone)
+  end
+
+  defp frame_timestamp(date, timezone) do
+    date =
+      Map.new(date, fn {key, value} ->
+        {key, String.to_integer(value)}
+      end)
+
+    date_tuple = {date["year"], date["month"], date["day"]}
+    time_tuple = {date["hour"], date["minute"], 0}
+
+    {date_tuple, time_tuple}
+    |> Timex.to_datetime(timezone)
+    |> Timex.to_unix()
+  end
+
+  defp apply_filters(query, %{"filters" => filters}) do
+    sensor_type = Map.get(filters, "sensor_type")
+    timezone = "Etc/UTC"
+
+    from_timestamp = from_timestamp(filters, timezone)
+    to_timestamp = to_timestamp(filters, timezone)
+
+    if from_timestamp < to_timestamp do
+      query =
+        from q in query,
+          where: q.timestamp >= ^from_timestamp and q.timestamp <= ^to_timestamp
+
+      query =
+        if sensor_type do
+          from q in query, where: q.sensor_type == ^sensor_type
+        else
+          query
+        end
+
+      {:ok, query}
+    else
+      {:error, :invalid_filters}
     end
   end
 
