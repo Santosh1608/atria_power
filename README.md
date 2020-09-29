@@ -11,6 +11,8 @@ This module simulates a sensor sending data using `GenServer` named as
 It will start as soon as our phoenix app runs but it will be in a *disabled* 
 state by default. An option is provided to enable this sensor.
 
+After enabled, It keeps posting data for every minute. Wait for couple of minutes to reflect the data into DataBase.
+
 ## Development Technologies
 At the moment of developing this project, I used the following versions of
 Elixir and Erlang.
