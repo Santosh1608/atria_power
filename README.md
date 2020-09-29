@@ -80,5 +80,21 @@ Used for flexible timestamp values for conveting to datetime and to develop quer
 ### [Chart.Js](https://www.chartjs.org/)
 Npm module for developing a LineChart.
 
+## Project Challenges
+  * Search Implementation (filters by datetime range)
+  * Sensor Server callbacks handling(It went on many iterations by updateing both client and server api handling funtions on requirement)
+  * Developing Charts (Making use of NodeModules inside the Phoenix)
+  
+## TIL
+Learned how to use `ChartJs` node package inside the Phoenix for developing charts over dynamic data.
+Understanding `Webpack.config.js` file in a deeper way like chaning paths adding entry points for new js files compilation and more.
+  
+## Overall Project Experience
+I felt it is a well framed to test core concepts of Elixir as project made me to code in all the core concepts of Elixir like `GenServers`, `Supervisors`, `Enumaration`, `Data Comprehension` and moreover it is outstanding on its own way covering the model, view, and Controller architecture concepts.
+Enjoyed in coding a `Genserver` that simulates sensor data to preserve and implementation of Data Charts using `Chart.Js` node library is a great experience.
+
+Thank You :)
+
 Best Regards,
+
 Ankanna
