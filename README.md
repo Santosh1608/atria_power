@@ -1,6 +1,6 @@
 # Welcome AtriaPower
 
-![Project Out Line Image]("AtriaPower.png")
+![Project Out Line Image](AtriaPower.png)
 
 ## Project Highlighted Module
 
